@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABL Gold Standings</title>
+<link href="https://fonts.googleapis.com/css2?family=Arial" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 13px;
+         background:#fff; color:#000; }
+
+  /* Top bar */
+  .topbar { background:#003366; color:#fff; padding:8px 16px;
+            display:flex; justify-content:space-between; align-items:center; }
+  .topbar-title { font-size:16px; font-weight:bold; letter-spacing:0.5px; }
+  .topbar-ts { font-size:11px; color:#aac; }
+
+  /* Tab nav — mimics the site nav style */
+  .tabnav { background:#e8e8e8; border-bottom:2px solid #003366;
+            display:flex; overflow-x:auto; }
+  .tab { padding:8px 16px; cursor:pointer; border:none; background:none;
+         font-size:12px; font-weight:bold; color:#003366; white-space:nowrap;
+         border-right:1px solid #ccc; }
+  .tab:hover { background:#d0d8e8; }
+  .tab.active { background:#003366; color:#fff; }
+
+  /* Page content */
+  .page { display:none; padding:16px 20px; max-width:1300px; margin:0 auto; }
+  .page.active { display:block; }
+  h1 { font-size:18px; font-weight:bold; margin-bottom:4px; color:#003366; }
+  .page-sub { font-size:12px; color:#555; margin-bottom:14px; line-height:1.5; }
+
+  /* Section header */
+  .section-title { font-size:15px; font-weight:bold; color:#003366;
+                   margin:16px 0 6px; border-bottom:2px solid #003366; padding-bottom:4px; }
+
+  /* Two-column layout */
+  .conf-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media(max-width:1050px) { .conf-grid { grid-template-columns:1fr; } }
+  .conf-block h2 { font-size:14px; font-weight:bold; color:#003366; margin-bottom:6px;
+                   border-bottom:1px solid #003366; padding-bottom:3px; }
+
+  /* Tables */
+  table { border-collapse:collapse; width:100%; font-size:12px; }
+  th { background:#003366; color:#fff; padding:5px 8px; text-align:center;
+       border:1px solid #225; white-space:nowrap; }
+  th.th-team { text-align:left; min-width:130px; }
+  th.th-num  { min-width:36px; }
+  th.th-seed { min-width:44px; }
+  th.th-nopo { min-width:52px; background:#550000; }
+  td { padding:4px 8px; border:1px solid #ccc; text-align:center; }
+  td.td-team { text-align:left; font-weight:bold; white-space:nowrap; }
+  td.td-num  { text-align:right; }
+  tr:nth-child(even) { background:#f2f2f2; }
+  tr:nth-child(even).tr-clinch,
+  tr:nth-child(odd).tr-clinch  { background:#e8f5e8; }
+  tr:nth-child(even).tr-elim,
+  tr:nth-child(odd).tr-elim    { background:#f5f5f5; color:#999; }
+  tr:nth-child(even).tr-po,
+  tr:nth-child(odd).tr-po      { background:#fffae8; }
+  tr.div-hdr td { background:#dde4ee; font-weight:bold; color:#003366;
+                  font-size:11px; padding:3px 8px; }
+  tr.conf-hdr td { background:#003366; color:#fff; font-size:12px;
+                   font-weight:bold; padding:4px 8px; }
+
+  /* Cell states */
+  .c-certain { color:#006600; font-weight:bold; text-align:center; }
+  .c-x       { color:#cc0000; font-weight:bold; text-align:center; }
+  .c-caret   { color:#888; text-align:center; }
+  .c-pct     { color:#006600; text-align:center; }
+  .c-pct-bad { color:#cc0000; text-align:center; }
+  .c-mn      { color:#006600; font-weight:bold; text-align:center; }
+  .c-en      { color:#cc0000; font-weight:bold; text-align:center; }
+
+  /* Notes box */
+  .notes { background:#f9f9f9; border:1px solid #ccc; border-radius:4px;
+           padding:10px 14px; margin-top:14px; font-size:11px; color:#444; }
+  .notes ul { padding-left:18px; line-height:1.8; }
+
+  /* Gold tracker */
+  .gold-leader-box { background:#fffae0; border:2px solid #cc9900;
+                     border-radius:4px; padding:10px 16px; margin-bottom:14px;
+                     display:inline-block; }
+  .gold-leader-box .label { font-size:11px; color:#666; text-transform:uppercase; }
+  .gold-leader-box .value { font-size:20px; font-weight:bold; color:#1a6b1a; }
+
+  /* Commands box */
+  .cmd-box { background:#f4f4f4; border:1px solid #ccc; border-radius:4px;
+             padding:12px 16px; margin-top:14px; }
+  .cmd-box h3 { font-size:12px; font-weight:bold; color:#003366; margin-bottom:6px; }
+  code { background:#e0e0e0; padding:2px 6px; border-radius:3px;
+         font-family:monospace; font-size:12px; }
+  pre  { background:#222; color:#8bc34a; padding:10px; border-radius:4px;
+         font-size:12px; margin:6px 0 12px; overflow-x:auto; }
+
+  .foot { text-align:center; font-size:11px; color:#888;
+          padding:20px; border-top:1px solid #ddd; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">ABL Gold Drafting Standings</span>
+  <span class="topbar-ts">Updated: September 05, 2026 at 01:46 AM</span>
+</div>
+<div class="tabnav">
+  <button class="tab active" data-tab="east-po"    onclick="showTab('east-po')">East Playoff Picture</button>
+  <button class="tab"        data-tab="west-po"    onclick="showTab('west-po')">West Playoff Picture</button>
+  <button class="tab"        data-tab="east-magic" onclick="showTab('east-magic')">East Magic Numbers</button>
+  <button class="tab"        data-tab="west-magic" onclick="showTab('west-magic')">West Magic Numbers</button>
+  <button class="tab"        data-tab="gold"       onclick="showTab('gold')">Gold Draft Tracker</button>
+  <button class="tab"        data-tab="standings"  onclick="showTab('standings')">Full Standings</button>
+  <button class="tab"        data-tab="info"       onclick="showTab('info')">How It Works</button>
+</div>
+
+<div class="page active" id="page-east-po">
+  <h1>Eastern Conference Playoff Picture</h1>
+  <p class="page-sub">
+    Probability each team wins each conference playoff seed (1–8) or misses playoffs entirely (No PO).<br>
+    Seeds 1–3 are reserved for division winners (ordered by record among winners). Seeds 4–8 go to the best remaining records.<br>
+    <strong style="color:#006600">100%</strong> = clinched this spot &nbsp;
+    <strong style="color:#cc0000">X</strong> = eliminated from this spot &nbsp;
+    <strong style="color:#888">^</strong> = guaranteed to finish better than this spot &nbsp;
+    0 of 8 spots clinched.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th class="th-team" rowspan="2">Team</th>
+        <th class="th-num" rowspan="2">W</th>
+        <th class="th-num" rowspan="2">L</th>
+        <th class="th-num" rowspan="2">GP</th>
+        <th colspan="3" style="background:#004488;">Division Winners</th>
+        <th colspan="5">Wildcards</th>
+        <th class="th-nopo" rowspan="2">No PO</th>
+      </tr>
+      <tr>
+        <th class="th-seed" style="background:#004488;">1*</th>
+        <th class="th-seed" style="background:#004488;">2*</th>
+        <th class="th-seed" style="background:#004488;">3*</th>
+        <th class="th-seed">4</th><th class="th-seed">5</th>
+        <th class="th-seed">6</th><th class="th-seed">7</th><th class="th-seed">8</th>
+      </tr>
+    </thead>
+    <tbody><tr class="div-hdr"><td colspan="13"><strong>Atlantic Division</strong></td></tr><tr class="">
+                  <td class="td-team">Boston</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">New Jersey</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">New York</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Philadelphia</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Toronto</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="div-hdr"><td colspan="13"><strong>Southeast Division</strong></td></tr><tr class="">
+                  <td class="td-team">Atlanta</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Washington</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Miami</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Orlando</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Charlotte</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="div-hdr"><td colspan="13"><strong>Central Division</strong></td></tr><tr class="">
+                  <td class="td-team">Chicago</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Cleveland</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Detroit</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Indiana</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Milwaukee</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr></tbody>
+  </table>
+  <div class="notes"><ul>
+    <li>^ means the team will finish better than this playoff spot</li>
+    <li>X means the team cannot win this playoff spot</li>
+    <li><span style="color:#006600">50%</span> — probability team wins this spot (controls own destiny)</li>
+    <li>* Seeds 1–3 reserved for division winners. ** Wildcard seeds 4–8 by record regardless of division.</li>
+  </ul></div>
+</div>
+<div class="page " id="page-west-po">
+  <h1>Western Conference Playoff Picture</h1>
+  <p class="page-sub">
+    Probability each team wins each conference playoff seed (1–8) or misses playoffs entirely (No PO).<br>
+    Seeds 1–3 are reserved for division winners (ordered by record among winners). Seeds 4–8 go to the best remaining records.<br>
+    <strong style="color:#006600">100%</strong> = clinched this spot &nbsp;
+    <strong style="color:#cc0000">X</strong> = eliminated from this spot &nbsp;
+    <strong style="color:#888">^</strong> = guaranteed to finish better than this spot &nbsp;
+    0 of 8 spots clinched.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th class="th-team" rowspan="2">Team</th>
+        <th class="th-num" rowspan="2">W</th>
+        <th class="th-num" rowspan="2">L</th>
+        <th class="th-num" rowspan="2">GP</th>
+        <th colspan="3" style="background:#004488;">Division Winners</th>
+        <th colspan="5">Wildcards</th>
+        <th class="th-nopo" rowspan="2">No PO</th>
+      </tr>
+      <tr>
+        <th class="th-seed" style="background:#004488;">1*</th>
+        <th class="th-seed" style="background:#004488;">2*</th>
+        <th class="th-seed" style="background:#004488;">3*</th>
+        <th class="th-seed">4</th><th class="th-seed">5</th>
+        <th class="th-seed">6</th><th class="th-seed">7</th><th class="th-seed">8</th>
+      </tr>
+    </thead>
+    <tbody><tr class="div-hdr"><td colspan="13"><strong>Midwest Division</strong></td></tr><tr class="">
+                  <td class="td-team">Houston</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">San Antonio</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Dallas</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">New Orleans</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Memphis</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="div-hdr"><td colspan="13"><strong>Northwest Division</strong></td></tr><tr class="">
+                  <td class="td-team">Denver</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Seattle</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Portland</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Utah</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Minnesota</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="div-hdr"><td colspan="13"><strong>Pacific Division</strong></td></tr><tr class="">
+                  <td class="td-team">Golden State</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Los Angeles (LAC)</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Los Angeles (LAL)</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Phoenix</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr><tr class="">
+                  <td class="td-team">Sacramento</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="td-num">0</td>
+                  <td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct">7%</td><td class="c-pct-bad">47%</td>
+                </tr></tbody>
+  </table>
+  <div class="notes"><ul>
+    <li>^ means the team will finish better than this playoff spot</li>
+    <li>X means the team cannot win this playoff spot</li>
+    <li><span style="color:#006600">50%</span> — probability team wins this spot (controls own destiny)</li>
+    <li>* Seeds 1–3 reserved for division winners. ** Wildcard seeds 4–8 by record regardless of division.</li>
+  </ul></div>
+</div>
+<div class="page" id="page-east-magic">
+  <h1>Eastern Conference Magic Numbers</h1>
+  <p class="page-sub">
+    <strong style="color:#006600">Win Magic Number (MN)</strong> — wins needed to clinch a playoff spot in the Eastern Conference.<br>
+    <strong style="color:#cc0000">Lose Elimination Number (EN)</strong> — losses until mathematically eliminated from the Eastern Conference playoff race.<br>
+    <strong style="color:#888">^</strong> = already better than this spot &nbsp;
+    <strong style="color:#cc0000">X</strong> = eliminated &nbsp;
+    <strong style="color:#006600">0</strong> = clinched
+  </p>
+  <table>
+    <thead><tr>
+          <th class="th-team">Team</th><th class="th-num">Rec</th><th class="th-num">GB</th><th class="th-num">Rem</th>
+          <th class="th-seed" style="color:#1a6b1a;">Win MN</th>
+          <th class="th-seed" style="color:#c00;">Lose EN</th>
+          <th class="th-seed">PO%</th><th class="th-seed">Div%</th>
+        </tr></thead>
+    <tbody><tr class="div-hdr"><td colspan="8"><strong>Atlantic Division</strong></td></tr><tr class="">
+                  <td class="td-team">Boston</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">New Jersey</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">New York</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Philadelphia</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Toronto</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="div-hdr"><td colspan="8"><strong>Southeast Division</strong></td></tr><tr class="">
+                  <td class="td-team">Atlanta</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Washington</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Miami</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Orlando</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Charlotte</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="div-hdr"><td colspan="8"><strong>Central Division</strong></td></tr><tr class="">
+                  <td class="td-team">Chicago</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Cleveland</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Detroit</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Indiana</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Milwaukee</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr></tbody>
+  </table>
+  <div class="notes"><ul>
+    <li>Win MN = 0 means team has clinched a playoff spot</li>
+    <li>Lose EN = 0 means team is mathematically eliminated</li>
+    <li>Magic numbers computed within each conference independently</li>
+    <li>Div% = probability of winning the division (earning a top-3 seed)</li>
+  </ul></div>
+</div>
+<div class="page" id="page-west-magic">
+  <h1>Western Conference Magic Numbers</h1>
+  <p class="page-sub">
+    <strong style="color:#006600">Win Magic Number (MN)</strong> — wins needed to clinch a playoff spot in the Western Conference.<br>
+    <strong style="color:#cc0000">Lose Elimination Number (EN)</strong> — losses until mathematically eliminated from the Western Conference playoff race.<br>
+    <strong style="color:#888">^</strong> = already better than this spot &nbsp;
+    <strong style="color:#cc0000">X</strong> = eliminated &nbsp;
+    <strong style="color:#006600">0</strong> = clinched
+  </p>
+  <table>
+    <thead><tr>
+          <th class="th-team">Team</th><th class="th-num">Rec</th><th class="th-num">GB</th><th class="th-num">Rem</th>
+          <th class="th-seed" style="color:#1a6b1a;">Win MN</th>
+          <th class="th-seed" style="color:#c00;">Lose EN</th>
+          <th class="th-seed">PO%</th><th class="th-seed">Div%</th>
+        </tr></thead>
+    <tbody><tr class="div-hdr"><td colspan="8"><strong>Midwest Division</strong></td></tr><tr class="">
+                  <td class="td-team">Houston</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">San Antonio</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Dallas</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">New Orleans</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Memphis</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="div-hdr"><td colspan="8"><strong>Northwest Division</strong></td></tr><tr class="">
+                  <td class="td-team">Denver</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Seattle</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Portland</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Utah</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Minnesota</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="div-hdr"><td colspan="8"><strong>Pacific Division</strong></td></tr><tr class="">
+                  <td class="td-team">Golden State</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Los Angeles (LAC)</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Los Angeles (LAL)</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Phoenix</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr><tr class="">
+                  <td class="td-team">Sacramento</td>
+                  <td class="td-num">0-0</td>
+                  <td class="td-num">—</td>
+                  <td class="td-num">82</td>
+                  <td class="td-num c-mn">1</td><td class="td-num c-en">82</td><td class="td-num c-pct">53%</td><td class="td-num">20%</td>
+                </tr></tbody>
+  </table>
+  <div class="notes"><ul>
+    <li>Win MN = 0 means team has clinched a playoff spot</li>
+    <li>Lose EN = 0 means team is mathematically eliminated</li>
+    <li>Magic numbers computed within each conference independently</li>
+    <li>Div% = probability of winning the division (earning a top-3 seed)</li>
+  </ul></div>
+</div>
+<div class="page" id="page-gold">
+  <h1>Gold Draft Tracker</h1>
+  <p class="page-sub">
+    Eliminated teams earn Gold Points for every win after their clock starts.
+    The team with the most Gold Points earns the #1 overall draft pick — no lottery, no tanking incentive.
+  </p>
+  <div class="gold-leader-box">
+    <div class="label">Current #1 Overall Pick</div>
+    <div class="value">— &nbsp; 0 Gold Pts</div>
+  </div>
+  <p style="font-size:12px;color:#555;margin-bottom:10px;">
+    0 teams eliminated (gold clock running) &nbsp;·&nbsp;
+    0 teams clinched playoffs &nbsp;·&nbsp;
+    Declarations: <strong>OFF</strong>
+  </p>
+
+  <div class="section-title">Draft Order</div>
+  <table>
+    <thead><tr>
+      <th class="th-num">Pick</th>
+      <th class="th-team">Team</th>
+      <th class="th-num">Record</th>
+      <th class="th-num">GB</th>
+      <th class="th-seed" style="color:#ffdd44;">Gold Pts</th>
+      <th class="th-seed">Gold Rec</th>
+      <th class="th-seed">Gold GP</th>
+      <th class="th-seed">Elim Type</th>
+      <th class="th-seed">Eliminated</th>
+    </tr></thead>
+    <tbody><tr><td colspan="9" style="text-align:center;padding:20px;color:#666;">No teams eliminated yet.</td></tr></tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">Still In Playoff Race</div>
+  <table>
+    <thead><tr>
+      <th class="th-team">Team</th>
+      <th class="th-num">Record</th>
+      <th class="th-num">GB</th>
+      <th class="th-seed">PO%</th>
+    </tr></thead>
+    <tbody><tr><td class="td-team">Boston</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">New Jersey</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">New York</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Philadelphia</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Toronto</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Atlanta</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Washington</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Miami</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Orlando</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Charlotte</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Chicago</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Cleveland</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Detroit</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Indiana</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Milwaukee</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Houston</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">San Antonio</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Dallas</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">New Orleans</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Memphis</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Denver</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Seattle</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Portland</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Utah</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Minnesota</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Golden State</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Los Angeles (LAC)</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Los Angeles (LAL)</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Phoenix</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr><tr><td class="td-team">Sacramento</td><td class="td-num">0-0</td><td class="td-num">—</td><td class="td-num c-pct">53%</td></tr></tbody>
+  </table>
+
+  <div class="cmd-box">
+    <h3>Commands</h3>
+    <p style="margin-bottom:8px;font-size:12px;">New season (clears all saved data):</p>
+    <pre>python gold_standings.py fullreset</pre>
+    <p style="margin-bottom:8px;font-size:12px;">Re-detect elimination dates only:</p>
+    <pre>python gold_standings.py reset</pre>
+    
+    <p style="margin-bottom:8px;font-size:12px;">Manually set elimination point:</p>
+    <pre>python gold_standings.py elim "Team Name" box43-7</pre>
+  </div>
+</div>
+
+<div class="page" id="page-standings">
+  <h1>Full Standings</h1>
+  <p class="page-sub">All 30 teams grouped by conference and division. Magic # and Elim # are conference-specific.</p>
+  <table>
+    <thead><tr>
+      <th class="th-num">#</th>
+      <th class="th-team">Team</th>
+      <th class="th-num">Record</th>
+      <th class="th-num">GB</th>
+      <th class="th-num">Rem</th>
+      <th class="th-seed" style="color:#ffdd44;">Win MN</th>
+      <th class="th-seed" style="color:#ff8888;">Lose EN</th>
+      <th class="th-seed">PO%</th>
+      <th class="th-seed" style="color:#ffdd44;">Gold Pts</th>
+      <th class="th-seed">Gold Rec</th>
+      <th class="th-seed">Eliminated</th>
+    </tr></thead>
+    <tbody><tr class="conf-hdr"><td colspan="11"><strong>EAST CONFERENCE</strong></td></tr><tr class="div-hdr"><td colspan="11"><strong>&nbsp;&nbsp;Atlantic Division</strong></td></tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">1</td>
+          <td class="td-team">Boston</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">2</td>
+          <td class="td-team">New Jersey</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">3</td>
+          <td class="td-team">New York</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">4</td>
+          <td class="td-team">Philadelphia</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">5</td>
+          <td class="td-team">Toronto</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="div-hdr"><td colspan="11"><strong>&nbsp;&nbsp;Central Division</strong></td></tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">6</td>
+          <td class="td-team">Chicago</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">7</td>
+          <td class="td-team">Cleveland</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">8</td>
+          <td class="td-team">Detroit</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">9</td>
+          <td class="td-team">Indiana</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">10</td>
+          <td class="td-team">Milwaukee</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="div-hdr"><td colspan="11"><strong>&nbsp;&nbsp;Southeast Division</strong></td></tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">11</td>
+          <td class="td-team">Atlanta</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">12</td>
+          <td class="td-team">Washington</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">13</td>
+          <td class="td-team">Miami</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">14</td>
+          <td class="td-team">Orlando</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">15</td>
+          <td class="td-team">Charlotte</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="conf-hdr"><td colspan="11"><strong>WEST CONFERENCE</strong></td></tr><tr class="div-hdr"><td colspan="11"><strong>&nbsp;&nbsp;Midwest Division</strong></td></tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">16</td>
+          <td class="td-team">Houston</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">17</td>
+          <td class="td-team">San Antonio</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">18</td>
+          <td class="td-team">Dallas</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">19</td>
+          <td class="td-team">New Orleans</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">20</td>
+          <td class="td-team">Memphis</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="div-hdr"><td colspan="11"><strong>&nbsp;&nbsp;Northwest Division</strong></td></tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">21</td>
+          <td class="td-team">Denver</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">22</td>
+          <td class="td-team">Seattle</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">23</td>
+          <td class="td-team">Portland</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">24</td>
+          <td class="td-team">Utah</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">25</td>
+          <td class="td-team">Minnesota</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="div-hdr"><td colspan="11"><strong>&nbsp;&nbsp;Pacific Division</strong></td></tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">26</td>
+          <td class="td-team">Golden State</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">27</td>
+          <td class="td-team">Los Angeles (LAC)</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">28</td>
+          <td class="td-team">Los Angeles (LAL)</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">29</td>
+          <td class="td-team">Phoenix</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr><tr class="tr-po">
+          <td class="td-num" style="color:#999;">30</td>
+          <td class="td-team">Sacramento</td>
+          <td class="td-num">0-0</td>
+          <td class="td-num">—</td>
+          <td class="td-num">82</td>
+          <td class="td-num c-mn">1</td>
+          <td class="td-num c-en">82</td>
+          <td class="td-num c-pct">53%</td>
+          <td class="td-num" style="color:#1a6b1a;font-weight:700;">—</td>
+          <td class="td-num">—-</td>
+          <td class="td-num" title="" style="cursor:help;"></td>
+        </tr></tbody>
+  </table>
+  <div class="notes"><ul>
+    <li>GB = games back from division leader</li>
+    <li>Win MN = wins needed to clinch a playoff spot in conference</li>
+    <li>Lose EN = losses until mathematically eliminated from conference playoff race</li>
+    <li>Gold Pts = points earned after elimination (wins × 2), used for draft order</li>
+    <li>Hover over "Eliminated" date for explanation</li>
+  </ul></div>
+</div>
+
+<div class="page" id="page-info">
+  <h1>How It Works</h1>
+
+  <div class="section-title">Gold Drafting System</div>
+  <p style="font-size:13px;line-height:1.8;margin-bottom:12px;">
+    Devised by Adam Gold (2012 Sloan Sports Analytics Conference) and popularized by
+    Micah Blake McCurdy (<a href="https://hockeyviz.com/txt/gold" target="_blank">HockeyViz</a>).
+    The traditional draft lottery incentivizes tanking — losing on purpose to get a better pick.
+    Gold fixes this: <strong>only wins after elimination earn draft value</strong>.
+  </p>
+  <ul style="font-size:13px;line-height:2;padding-left:20px;margin-bottom:14px;">
+    <li>When a team is <strong>mathematically eliminated</strong> from the conference playoff race, their Gold clock starts</li>
+    <li>Every <strong>win</strong> after that earns <strong>2 Gold Points</strong></li>
+    <li>Draft order = most Gold Points picks first</li>
+    <li>Ties in Gold Points broken by fewer regular-season wins (weaker team picks higher)</li>
+    <li>Playoff teams pick after all eliminated teams</li>
+  </ul>
+
+  <div class="section-title">Magic Numbers</div>
+  <ul style="font-size:13px;line-height:2;padding-left:20px;margin-bottom:14px;">
+    <li><strong style="color:#006600">Win Magic Number</strong> — exact number of wins to guarantee a playoff spot, even if all other teams win out. Uses the maximum-points formula: exact in a 2-outcome league.</li>
+    <li><strong style="color:#cc0000">Lose Elimination Number</strong> — number of losses until you cannot reach the 8th seed in your conference even winning every remaining game.</li>
+  </ul>
+
+  <div class="section-title">Simulation</div>
+  <p style="font-size:13px;line-height:1.8;">
+    50,000 Monte Carlo simulations of the real remaining schedule.
+    Each game: P(home wins) = logistic((home_rating − away_rating + HCA) / 11.0).
+    Ratings from ridge regression on all regular-season results.
+    Seeding: 3 division winners per conference (seeds by record among winners),
+    then 5 wildcard spots by best remaining conference record.
+  </p>
+</div>
+
+<p class="foot">ABL Gold Drafting Standings &nbsp;·&nbsp; Based on Adam Gold (2012 Sloan) via Micah Blake McCurdy
+&nbsp;·&nbsp; 50,000 simulations &nbsp;·&nbsp; Updated September 05, 2026 at 01:46 AM</p>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab[data-tab="' + name + '"]').classList.add('active');
+  document.getElementById('page-' + name).classList.add('active');
+}
+</script>
+</body></html>
