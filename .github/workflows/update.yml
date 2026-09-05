@@ -1,0 +1,52 @@
+name: Update ABL Dashboards
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  # Also allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Gold Standings
+        run: python gold_standings.py
+        continue-on-error: true   # don't fail the whole run if scraping is blocked
+
+      - name: Run ABL Analytics
+        run: python abl_analytics.py
+        continue-on-error: true
+
+      - name: Copy outputs to docs/
+        run: |
+          cp gold_dashboard.html docs/gold.html 2>/dev/null || echo "gold_dashboard.html not found"
+          cp dashboard.html docs/analytics.html 2>/dev/null || echo "dashboard.html not found"
+          cp analytics_data.json docs/ 2>/dev/null || echo "analytics_data.json not found"
+          cp gold_state.json docs/ 2>/dev/null || echo "gold_state.json not found"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          # Only commit if something actually changed
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update dashboards $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi

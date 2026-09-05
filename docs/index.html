@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABL Dashboard</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size:13px; background:#fff; color:#000; }
+  .topbar { background:#003366; color:#fff; padding:12px 20px;
+            display:flex; justify-content:space-between; align-items:center; }
+  .topbar-title { font-size:18px; font-weight:bold; }
+  .topbar-ts { font-size:11px; color:#aac; }
+  .nav { background:#e8e8e8; border-bottom:2px solid #003366; padding:20px; }
+  .nav h2 { font-size:14px; font-weight:bold; color:#003366; margin-bottom:16px;
+             border-bottom:1px solid #003366; padding-bottom:6px; }
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .card { background:#fff; border:2px solid #003366; border-radius:4px; padding:20px;
+          text-decoration:none; color:#000; display:block; transition:background .15s; }
+  .card:hover { background:#e8f0ff; }
+  .card h3 { font-size:16px; font-weight:bold; color:#003366; margin-bottom:8px; }
+  .card p  { font-size:12px; color:#555; line-height:1.6; }
+  .card .arrow { font-size:20px; color:#003366; float:right; margin-top:-4px; }
+  .status { padding:20px; font-size:12px; color:#555; }
+  .status table { border-collapse:collapse; margin-top:10px; }
+  .status td, .status th { border:1px solid #ddd; padding:4px 10px; }
+  .status th { background:#003366; color:#fff; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">ABL — Ascension Basketball League</span>
+  <span class="topbar-ts" id="ts">Loading...</span>
+</div>
+
+<div class="nav">
+  <h2>Dashboards</h2>
+  <div class="card-grid">
+    <a class="card" href="gold.html">
+      <span class="arrow">&#8594;</span>
+      <h3>&#127881; Gold Standings</h3>
+      <p>Playoff picture, magic numbers, elimination numbers, and Gold draft tracker. Updated every 15 minutes during the season.</p>
+    </a>
+    <a class="card" href="analytics.html">
+      <span class="arrow">&#8594;</span>
+      <h3>&#128200; Analytics Dashboard</h3>
+      <p>BPM 2.0 player ratings, power ratings, trade analyzer, game log, and matchup analyzer.</p>
+    </a>
+  </div>
+</div>
+
+<div class="status">
+  <strong>Last update status</strong>
+  <div id="statusInfo" style="margin-top:8px;color:#555;">Loading data...</div>
+</div>
+
+<script>
+// Load analytics_data.json to show update time
+fetch('analytics_data.json')
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('ts').textContent = 'Updated: ' + d.updated;
+    document.getElementById('statusInfo').innerHTML =
+      '<table><tr><th>Season Progress</th><th>HCA</th><th>Lambda</th></tr>' +
+      '<tr><td>' + d.pct_done + '% complete</td><td>' +
+      (d.hca >= 0 ? '+' : '') + d.hca.toFixed(2) + ' pts</td><td>' +
+      d.lambda + '</td></tr></table>';
+  })
+  .catch(() => {
+    document.getElementById('ts').textContent = 'Data unavailable';
+    document.getElementById('statusInfo').textContent = 'Could not load data — dashboards may still be available directly.';
+  });
+</script>
+</body>
+</html>
