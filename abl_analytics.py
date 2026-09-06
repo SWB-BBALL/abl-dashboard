@@ -16,12 +16,12 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.5",
 }
 ALLSTAR_TEAMS = {'east', 'west'}    # exhibition game team names — skipped everywhere
-MIN_DELAY = 1.5
-MAX_DELAY = 3.0
+CURRENT_SEASON = "2006"             # overridden at runtime by detect_current_season()
+MIN_DELAY = 0.5
+MAX_DELAY = 1.5
 TOTAL_GAMES = 82
 N_SIMS = 10000
 REPLACEMENT_LEVEL = -2.0   # BPM of a replacement player
-CURRENT_SEASON = "2004"     # Only pull stats from this season year — update each season
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -240,6 +240,46 @@ def parse_game_text(text):
 # ══════════════════════════════════════════════════════════════════════════════
 # 1. TEAM PACE / EFFICIENCY
 # ══════════════════════════════════════════════════════════════════════════════
+
+def detect_current_season():
+    """
+    Detect the current season year by reading date headers from the schedule page.
+    Returns the most recent year found in regular season date rows as a string.
+    Falls back to the current calendar year if detection fails.
+    """
+    import datetime as _dt
+    fallback = str(_dt.date.today().year)
+    try:
+        r = polite_get(f"{BASE_URL}schedule.htm")
+        if not r:
+            return fallback
+        soup = BeautifulSoup(r.text, 'html.parser')
+        years = []
+        in_reg = False
+        for td in soup.find_all('td'):
+            td_class = ' '.join(td.get('class', [])).lower()
+            text = td.get_text(separator=' ').strip()
+            if 'tableheader' in td_class:
+                tl = text.lower()
+                if 'regular season' in tl:
+                    in_reg = True
+                elif 'preseason' in tl and in_reg:
+                    break
+                elif any(k in tl for k in ('playoff', 'postseason')):
+                    break
+                continue
+            if not in_reg:
+                continue
+            if 'header' in td_class and 'tableheader' not in td_class:
+                m = re.search(r'(\d{4})-\d{2}-\d{2}', text)
+                if m:
+                    years.append(int(m.group(1)))
+        if years:
+            return str(max(years))
+    except Exception as e:
+        print(f"  Season detection failed: {e}")
+    return fallback
+
 
 def scrape_team_leaders():
     print("\n[1/4] Scraping team pace and efficiency stats...")
@@ -1338,6 +1378,63 @@ function drawMatchupChart(margins,teamA,teamB){
         f.write(HTML)
     print("  dashboard.html written.")
 
+def write_placeholder_html():
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABL Analytics — Off Season</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: Arial, Helvetica, sans-serif; background:#fff; color:#000;
+         display:flex; flex-direction:column; align-items:center; justify-content:center;
+         min-height:100vh; text-align:center; padding:40px 20px; }
+  .topbar { position:fixed; top:0; left:0; right:0; background:#003366; color:#fff;
+            padding:10px 20px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar-title { font-size:16px; font-weight:bold; }
+  .back { color:#aac; font-size:12px; text-decoration:none; }
+  .back:hover { color:#fff; }
+  .dino { font-family: monospace; font-size:13px; line-height:1.4;
+          white-space:pre; text-align:left; display:inline-block;
+          background:#f9f9f9; border:1px solid #ddd; border-radius:4px;
+          padding:20px 28px; margin:32px 0; color:#333; }
+  h1 { font-size:24px; font-weight:bold; color:#003366; margin-top:60px; }
+  p  { font-size:14px; color:#555; margin-top:12px; line-height:1.6; max-width:480px; }
+  .home-link { display:inline-block; margin-top:24px; padding:10px 24px;
+               background:#003366; color:#fff; text-decoration:none;
+               font-weight:bold; font-size:13px; border-radius:3px; }
+  .home-link:hover { background:#004488; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">ABL Analytics Dashboard</span>
+  <a class="back" href="index.html">&#8592; Back to home</a>
+</div>
+
+<h1>No Games Yet</h1>
+<p>The regular season hasn't started yet. Check back once games are underway — BPM ratings, power rankings, and the game log will all be here.</p>
+
+<div class="dino">                 __
+                / _)
+       _.----._/ /
+      /         /
+   __/ (  | (  |
+  /__.-'|_|--|_|
+
+  ABL OFF SEASON</div>
+
+<p style="color:#999;font-size:12px;">Analytics will auto-populate when the first game is played.</p>
+<a class="home-link" href="index.html">&#8592; Back to Home</a>
+</body>
+</html>"""
+    with open("dashboard.html", "w", encoding="utf-8") as f:
+        f.write(html)
+    print("  Placeholder dashboard.html written.")
+
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1346,14 +1443,29 @@ if __name__ == "__main__":
     t0 = time.time()
     print("ABL Analytics — BPM 2.0 + Full Suite")
     print("=" * 50)
-    scraped_teams            = scrape_team_leaders()
-    teams_map, hca, lam, played, unplayed = solve_team_ratings()
+
+    # Auto-detect current season year from schedule page
+    CURRENT_SEASON = detect_current_season()
+    print(f"  Season: {CURRENT_SEASON}")
+
+    scraped_teams = scrape_team_leaders()
+    result        = solve_team_ratings()
+
+    # Pre-season: solve_team_ratings returns 3 values when no games played
+    if len(result) == 3:
+        print("\nNo games played yet — writing placeholder page.")
+        write_placeholder_html()
+        print(f"\nDone in {time.time()-t0:.1f}s")
+        import sys; sys.exit(0)
+
+    teams_map, hca, lam, played, unplayed = result
     print("\n[3/5] Updating game log...")
-    game_log                 = update_game_log(played)
-    players_list             = gather_player_stats(teams_map, scraped_teams)
-    sim_results              = simulate_season(teams_map, hca, unplayed) if teams_map else {}
+    game_log     = update_game_log(played)
+    players_list = gather_player_stats(teams_map, scraped_teams)
+    sim_results  = simulate_season(teams_map, hca, unplayed) if teams_map else {}
     if teams_map:
         write_dashboard_html(teams_map, players_list, hca, lam, sim_results, game_log)
     else:
-        print("\nNo team data — dashboard not written.")
+        print("\nNo team data — writing placeholder page.")
+        write_placeholder_html()
     print(f"\nDone in {time.time()-t0:.1f}s")

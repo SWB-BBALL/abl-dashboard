@@ -46,7 +46,8 @@ GOLD_STATE_FILE = "gold_state.json"
 TOTAL_GAMES    = 82
 PLAYOFF_SPOTS  = 16          # top 16 of 30
 ALLOW_DECLARATIONS = False       # set True to let teams voluntarily declare elimination early
-ELIM_THRESHOLD = 1e-6        # probability below this = eliminated
+ELIM_THRESHOLD   = 1e-6    # hard mathematical elimination for Gold clock purposes
+DISPLAY_ELIM_PCT = 0.005   # show X in playoff picture below this (0.5%) — not actual elimination
 SIM_N          = 50_000      # sims for elimination check
 SPREAD         = 11.0        # game-level std dev for sim
 ALLSTAR_TEAMS  = {'east', 'west'}    # team names to treat as exhibition — skip entirely
@@ -760,23 +761,36 @@ def write_gold_dashboard(standings, gold, playoff_probs, seed_probs, magic, elim
 
     # ── Per-seed probability cell ─────────────────────────────────────────────
     def po_cell(t, seed):
-        p  = seed_probs.get(t, {}).get(f'seed_{seed}', 0)
-        pp = playoff_probs.get(t, 0)
-        is_elim = pp <= ELIM_THRESHOLD
+        p   = seed_probs.get(t, {}).get(f'seed_{seed}', 0)
+        pp  = playoff_probs.get(t, 0)
+        mn  = magic.get(t)
+        en  = elim_number.get(t)
+
+        # Only show as truly clinched/eliminated if mathematically confirmed
+        is_math_elim   = pp <= ELIM_THRESHOLD or en == 0
+        is_math_clinch = mn == 0
+
         if seed == 0:   # No Playoffs column
-            if is_elim or p >= 0.9999:
+            if is_math_elim:
                 return '<td class="c-certain">100%</td>'
-            if p <= 0.0001:
+            if is_math_clinch:
+                return '<td class="c-x">X</td>'
+            if p <= DISPLAY_ELIM_PCT:
                 return '<td class="c-x">X</td>'
             return f'<td class="c-pct-bad">{pct_fmt(p)}</td>'
         else:
-            if is_elim:
+            if is_math_elim:
                 return '<td class="c-x">X</td>'
-            if p >= 0.9999:
+            if is_math_clinch and seed == 1:
+                # Only show 100% for seed 1 if they've clinched the top spot
                 return f'<td class="c-certain">100%</td>'
-            if p <= 0.0001:
+            if p >= CLINCH_THRESHOLD and is_math_clinch:
+                return f'<td class="c-certain">100%</td>'
+            if p <= DISPLAY_ELIM_PCT:
                 better = sum(seed_probs.get(t,{}).get(f'seed_{s}',0) for s in range(1,seed))
-                return '<td class="c-caret">^</td>' if better > 0.0001 else '<td class="c-x">X</td>'
+                if better > DISPLAY_ELIM_PCT:
+                    return '<td class="c-caret">^</td>'
+                return '<td class="c-x">X</td>'
             return f'<td class="c-pct">{pct_fmt(p)}</td>'
 
     # ── Per-seed magic number cell ────────────────────────────────────────────
@@ -1200,7 +1214,8 @@ def write_gold_dashboard(standings, gold, playoff_probs, seed_probs, magic, elim
     <pre>python gold_standings.py fullreset</pre>
     <p style="margin-bottom:8px;font-size:12px;">Re-detect elimination dates only:</p>
     <pre>python gold_standings.py reset</pre>
-    {'<p style=\"margin-bottom:8px;font-size:12px;\">Declare a team eliminated:</p><pre>python gold_standings.py declare \"Team Name\"</pre>' if ALLOW_DECLARATIONS else ''}
+    {('<p style="margin-bottom:8px;font-size:12px;">Declare a team eliminated:</p>'
+       '<pre>python gold_standings.py declare "Team Name"</pre>') if ALLOW_DECLARATIONS else ''}
     <p style="margin-bottom:8px;font-size:12px;">Manually set elimination point:</p>
     <pre>python gold_standings.py elim "Team Name" box43-7</pre>
   </div>
