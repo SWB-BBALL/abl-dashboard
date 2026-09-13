@@ -1,36 +1,16 @@
 {
   "declarations": [],
   "eliminated_after": {
-    "San Antonio": "box30-5",
-    "Cleveland": "box28-2",
-    "Toronto": "box30-6"
+    "San Antonio": "box115-1"
   },
   "elim_info": {
     "San Antonio": {
-      "box_id": "box30-5",
+      "box_id": "box115-1",
       "date": "",
       "eighth_team": null,
       "eighth_pts": 0,
       "team_max": 0,
-      "team_pts": 0,
-      "reason": "Season ended"
-    },
-    "Cleveland": {
-      "box_id": "box28-2",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 2,
-      "reason": "Season ended"
-    },
-    "Toronto": {
-      "box_id": "box30-6",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 2,
+      "team_pts": 10,
       "reason": "Season ended"
     }
   }
