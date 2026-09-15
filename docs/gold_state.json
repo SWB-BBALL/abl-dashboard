@@ -1,0 +1,107 @@
+{
+  "declarations": [],
+  "eliminated_after": {
+    "Toronto": "box126-7",
+    "Utah": "box134-10",
+    "Los Angeles (LAC)": "box134-8",
+    "Memphis": "box135-7",
+    "San Antonio": "box135-2",
+    "New Orleans": "box135-3",
+    "Chicago": "box135-6",
+    "Cleveland": "box133-4",
+    "Sacramento": "box133-1",
+    "Detroit": "box134-4"
+  },
+  "elim_info": {
+    "Toronto": {
+      "box_id": "box126-7",
+      "date": "",
+      "eighth_team": "Milwaukee",
+      "eighth_pts": 70,
+      "team_max": 76,
+      "team_pts": 18,
+      "reason": "Cannot reach Milwaukee (70 pts) even winning all remaining games (max 76 pts)"
+    },
+    "Utah": {
+      "box_id": "box134-10",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 26,
+      "reason": "Season ended"
+    },
+    "Los Angeles (LAC)": {
+      "box_id": "box134-8",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 26,
+      "reason": "Season ended"
+    },
+    "Memphis": {
+      "box_id": "box135-7",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 26,
+      "reason": "Season ended"
+    },
+    "San Antonio": {
+      "box_id": "box135-2",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 12,
+      "reason": "Season ended"
+    },
+    "New Orleans": {
+      "box_id": "box135-3",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 28,
+      "reason": "Season ended"
+    },
+    "Chicago": {
+      "box_id": "box135-6",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 24,
+      "reason": "Season ended"
+    },
+    "Cleveland": {
+      "box_id": "box133-4",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 40,
+      "reason": "Season ended"
+    },
+    "Sacramento": {
+      "box_id": "box133-1",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 22,
+      "reason": "Season ended"
+    },
+    "Detroit": {
+      "box_id": "box134-4",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 34,
+      "reason": "Season ended"
+    }
+  }
+}
