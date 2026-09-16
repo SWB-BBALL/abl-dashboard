@@ -10,7 +10,9 @@
     "Chicago": "box135-6",
     "Cleveland": "box133-4",
     "Sacramento": "box133-1",
-    "Detroit": "box134-4"
+    "Detroit": "box134-4",
+    "Charlotte": "box148-4",
+    "Orlando": "box149-3"
   },
   "elim_info": {
     "Toronto": {
@@ -101,6 +103,24 @@
       "eighth_pts": 0,
       "team_max": 0,
       "team_pts": 34,
+      "reason": "Season ended"
+    },
+    "Charlotte": {
+      "box_id": "box148-4",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 60,
+      "reason": "Season ended"
+    },
+    "Orlando": {
+      "box_id": "box149-3",
+      "date": "",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 66,
       "reason": "Season ended"
     }
   }
