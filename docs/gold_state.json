@@ -5,7 +5,13 @@
     "Chicago": "box138-4",
     "Detroit": "box142-3",
     "San Antonio": "box149-7",
-    "Cleveland": "box150-1"
+    "Cleveland": "box150-1",
+    "Utah": "box160-1",
+    "Los Angeles (LAC)": "box160-4",
+    "Memphis": "box160-4",
+    "Sacramento": "box160-8",
+    "New Orleans": "box162-6",
+    "New Jersey": "box163-3"
   },
   "elim_info": {
     "Toronto": {
@@ -52,6 +58,60 @@
       "team_max": 80,
       "team_pts": 44,
       "reason": "Cannot reach Milwaukee (82 pts) even winning all remaining games (max 80 pts)"
+    },
+    "Utah": {
+      "box_id": "box160-1",
+      "date": "",
+      "eighth_team": "Phoenix",
+      "eighth_pts": 56,
+      "team_max": 54,
+      "team_pts": 28,
+      "reason": "Cannot reach Phoenix (56 pts) even winning all remaining games (max 54 pts)"
+    },
+    "Los Angeles (LAC)": {
+      "box_id": "box160-4",
+      "date": "",
+      "eighth_team": "Phoenix",
+      "eighth_pts": 58,
+      "team_max": 56,
+      "team_pts": 32,
+      "reason": "Cannot reach Phoenix (58 pts) even winning all remaining games (max 56 pts)"
+    },
+    "Memphis": {
+      "box_id": "box160-4",
+      "date": "",
+      "eighth_team": "Phoenix",
+      "eighth_pts": 58,
+      "team_max": 56,
+      "team_pts": 30,
+      "reason": "Cannot reach Phoenix (58 pts) even winning all remaining games (max 56 pts)"
+    },
+    "Sacramento": {
+      "box_id": "box160-8",
+      "date": "",
+      "eighth_team": "Phoenix",
+      "eighth_pts": 58,
+      "team_max": 56,
+      "team_pts": 28,
+      "reason": "Cannot reach Phoenix (58 pts) even winning all remaining games (max 56 pts)"
+    },
+    "New Orleans": {
+      "box_id": "box162-6",
+      "date": "",
+      "eighth_team": "Phoenix",
+      "eighth_pts": 58,
+      "team_max": 56,
+      "team_pts": 30,
+      "reason": "Cannot reach Phoenix (58 pts) even winning all remaining games (max 56 pts)"
+    },
+    "New Jersey": {
+      "box_id": "box163-3",
+      "date": "",
+      "eighth_team": "Miami",
+      "eighth_pts": 88,
+      "team_max": 86,
+      "team_pts": 64,
+      "reason": "Cannot reach Miami (88 pts) even winning all remaining games (max 86 pts)"
     }
   }
 }
