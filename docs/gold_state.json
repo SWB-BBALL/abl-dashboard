@@ -1,127 +1,57 @@
 {
   "declarations": [],
   "eliminated_after": {
-    "Toronto": "box126-7",
-    "Utah": "box134-10",
-    "Los Angeles (LAC)": "box134-8",
-    "Memphis": "box135-7",
-    "San Antonio": "box135-2",
-    "New Orleans": "box135-3",
-    "Chicago": "box135-6",
-    "Cleveland": "box133-4",
-    "Sacramento": "box133-1",
-    "Detroit": "box134-4",
-    "Charlotte": "box148-4",
-    "Orlando": "box149-3"
+    "Toronto": "box133-6",
+    "Chicago": "box138-4",
+    "Detroit": "box142-3",
+    "San Antonio": "box149-7",
+    "Cleveland": "box150-1"
   },
   "elim_info": {
     "Toronto": {
-      "box_id": "box126-7",
+      "box_id": "box133-6",
       "date": "",
-      "eighth_team": "Milwaukee",
-      "eighth_pts": 70,
-      "team_max": 76,
+      "eighth_team": "Miami",
+      "eighth_pts": 72,
+      "team_max": 70,
       "team_pts": 18,
-      "reason": "Cannot reach Milwaukee (70 pts) even winning all remaining games (max 76 pts)"
-    },
-    "Utah": {
-      "box_id": "box134-10",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 26,
-      "reason": "Season ended"
-    },
-    "Los Angeles (LAC)": {
-      "box_id": "box134-8",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 26,
-      "reason": "Season ended"
-    },
-    "Memphis": {
-      "box_id": "box135-7",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 26,
-      "reason": "Season ended"
-    },
-    "San Antonio": {
-      "box_id": "box135-2",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 12,
-      "reason": "Season ended"
-    },
-    "New Orleans": {
-      "box_id": "box135-3",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 28,
-      "reason": "Season ended"
+      "reason": "Cannot reach Miami (72 pts) even winning all remaining games (max 70 pts)"
     },
     "Chicago": {
-      "box_id": "box135-6",
+      "box_id": "box138-4",
       "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
+      "eighth_team": "Milwaukee",
+      "eighth_pts": 76,
+      "team_max": 74,
       "team_pts": 24,
-      "reason": "Season ended"
-    },
-    "Cleveland": {
-      "box_id": "box133-4",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 40,
-      "reason": "Season ended"
-    },
-    "Sacramento": {
-      "box_id": "box133-1",
-      "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 22,
-      "reason": "Season ended"
+      "reason": "Cannot reach Milwaukee (76 pts) even winning all remaining games (max 74 pts)"
     },
     "Detroit": {
-      "box_id": "box134-4",
+      "box_id": "box142-3",
       "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
+      "eighth_team": "Miami",
+      "eighth_pts": 76,
+      "team_max": 74,
       "team_pts": 34,
-      "reason": "Season ended"
+      "reason": "Cannot reach Miami (76 pts) even winning all remaining games (max 74 pts)"
     },
-    "Charlotte": {
-      "box_id": "box148-4",
+    "San Antonio": {
+      "box_id": "box149-7",
       "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 60,
-      "reason": "Season ended"
+      "eighth_team": "Minnesota",
+      "eighth_pts": 50,
+      "team_max": 48,
+      "team_pts": 12,
+      "reason": "Cannot reach Minnesota (50 pts) even winning all remaining games (max 48 pts)"
     },
-    "Orlando": {
-      "box_id": "box149-3",
+    "Cleveland": {
+      "box_id": "box150-1",
       "date": "",
-      "eighth_team": null,
-      "eighth_pts": 0,
-      "team_max": 0,
-      "team_pts": 66,
-      "reason": "Season ended"
+      "eighth_team": "Milwaukee",
+      "eighth_pts": 82,
+      "team_max": 80,
+      "team_pts": 44,
+      "reason": "Cannot reach Milwaukee (82 pts) even winning all remaining games (max 80 pts)"
     }
   }
 }
