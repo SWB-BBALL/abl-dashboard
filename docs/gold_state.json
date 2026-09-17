@@ -11,7 +11,26 @@
     "Memphis": "box160-4",
     "Sacramento": "box160-8",
     "New Orleans": "box162-6",
-    "New Jersey": "box163-3"
+    "New Jersey": "box163-3",
+    "Orlando": "box172-5",
+    "Miami": "box172-5",
+    "Charlotte": "box175-6",
+    "Minnesota": "box185-13",
+    "Phoenix": "box185-13",
+    "Golden State": "box185-5",
+    "Houston": "box185-9",
+    "Boston": "box185-2",
+    "Dallas": "box185-3",
+    "Indiana": "box185-8",
+    "New York": "box185-2",
+    "Milwaukee": "box185-13",
+    "Portland": "box185-9",
+    "Los Angeles (LAL)": "box185-3",
+    "Atlanta": "box185-6",
+    "Philadelphia": "box185-6",
+    "Seattle": "box185-1",
+    "Denver": "box185-7",
+    "Washington": "box185-12"
   },
   "elim_info": {
     "Toronto": {
@@ -112,6 +131,177 @@
       "team_max": 86,
       "team_pts": 64,
       "reason": "Cannot reach Miami (88 pts) even winning all remaining games (max 86 pts)"
+    },
+    "Orlando": {
+      "box_id": "box172-5",
+      "date": "April 06, 2007",
+      "eighth_team": "Miami",
+      "eighth_pts": 92,
+      "team_max": 90,
+      "team_pts": 76,
+      "reason": "Cannot reach Miami (92 pts) even winning all remaining games (max 90 pts)"
+    },
+    "Miami": {
+      "box_id": "box172-5",
+      "date": "April 06, 2007",
+      "eighth_team": "Miami",
+      "eighth_pts": 92,
+      "team_max": 106,
+      "team_pts": 92,
+      "reason": "Cannot reach Miami (92 pts) even winning all remaining games (max 106 pts)"
+    },
+    "Charlotte": {
+      "box_id": "box175-6",
+      "date": "April 09, 2007",
+      "eighth_team": "Miami",
+      "eighth_pts": 94,
+      "team_max": 92,
+      "team_pts": 80,
+      "reason": "Cannot reach Miami (94 pts) even winning all remaining games (max 92 pts)"
+    },
+    "Minnesota": {
+      "box_id": "box185-13",
+      "date": "April 19, 2007",
+      "eighth_team": "Minnesota",
+      "eighth_pts": 68,
+      "team_max": 70,
+      "team_pts": 68,
+      "reason": "Cannot reach Minnesota (68 pts) even winning all remaining games (max 70 pts)"
+    },
+    "Phoenix": {
+      "box_id": "box185-13",
+      "date": "April 19, 2007",
+      "eighth_team": "Minnesota",
+      "eighth_pts": 68,
+      "team_max": 66,
+      "team_pts": 66,
+      "reason": "Cannot reach Minnesota (68 pts) even winning all remaining games (max 66 pts)"
+    },
+    "Golden State": {
+      "box_id": "box185-5",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 124,
+      "reason": "Season ended"
+    },
+    "Houston": {
+      "box_id": "box185-9",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 88,
+      "reason": "Season ended"
+    },
+    "Boston": {
+      "box_id": "box185-2",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 114,
+      "reason": "Season ended"
+    },
+    "Dallas": {
+      "box_id": "box185-3",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 152,
+      "reason": "Season ended"
+    },
+    "Indiana": {
+      "box_id": "box185-8",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 130,
+      "reason": "Season ended"
+    },
+    "New York": {
+      "box_id": "box185-2",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 118,
+      "reason": "Season ended"
+    },
+    "Milwaukee": {
+      "box_id": "box185-13",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 108,
+      "reason": "Season ended"
+    },
+    "Portland": {
+      "box_id": "box185-9",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 108,
+      "reason": "Season ended"
+    },
+    "Los Angeles (LAL)": {
+      "box_id": "box185-3",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 94,
+      "reason": "Season ended"
+    },
+    "Atlanta": {
+      "box_id": "box185-6",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 138,
+      "reason": "Season ended"
+    },
+    "Philadelphia": {
+      "box_id": "box185-6",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 114,
+      "reason": "Season ended"
+    },
+    "Seattle": {
+      "box_id": "box185-1",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 142,
+      "reason": "Season ended"
+    },
+    "Denver": {
+      "box_id": "box185-7",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 84,
+      "reason": "Season ended"
+    },
+    "Washington": {
+      "box_id": "box185-12",
+      "date": "April 19, 2007",
+      "eighth_team": null,
+      "eighth_pts": 0,
+      "team_max": 0,
+      "team_pts": 106,
+      "reason": "Season ended"
     }
   }
 }
